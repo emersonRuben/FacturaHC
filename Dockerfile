@@ -7,34 +7,44 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
+    libzip-dev \
     zip \
     unzip \
-    libzip-dev \
-    libxml2-dev
-
-# Limpiar cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Instalar extensiones PHP (incluye SOAP para SUNAT/Greenter)
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip soap
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip soap
 
 # Instalar Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Establecer directorio de trabajo
-WORKDIR /var/www
+# Configurar directorio de trabajo
+WORKDIR /app
 
-# Copiar archivos del proyecto
-COPY . /var/www
+# Copiar archivos de dependencias
+COPY composer.json composer.lock ./
 
-# Instalar dependencias de PHP
-RUN composer install --no-dev --optimize-autoloader
+# Instalar dependencias de PHP (sin dev para producción)
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 
-# Dar permisos a storage y bootstrap/cache
-RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
-RUN chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+# Copiar el resto del código
+COPY . .
 
-# Exponer puerto 9000
-EXPOSE 9000
+# Crear directorios necesarios y permisos
+RUN mkdir -p storage/framework/cache/data \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/logs \
+    bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache \
+    && chown -R www-data:www-data storage bootstrap/cache
 
-CMD ["php-fpm"]
+# Generar caches de Laravel
+RUN php artisan config:cache || true \
+    && php artisan route:cache || true \
+    && php artisan view:cache || true
+
+# Exponer puerto 8000
+EXPOSE 8000
+
+# Comando de inicio
+CMD php artisan migrate --force && \
+    php artisan l5-swagger:generate && \
+    php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
