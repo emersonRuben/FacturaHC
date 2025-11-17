@@ -13,27 +13,27 @@
 
 Sistema completo de facturación electrónica para SUNAT Perú desarrollado con **Laravel 12** y la librería **Greenter 5.1**. Este proyecto implementa todas las funcionalidades necesarias para la generación, envío y gestión de comprobantes de pago electrónicos según las normativas de SUNAT.
 
-## 🚀 Características Principales
+## Características Principales
 
 ### Documentos Electrónicos Soportados
-- ✅ **Facturas** (Tipo 01)
-- ✅ **Boletas de Venta** (Tipo 03) 
-- ✅ **Notas de Crédito** (Tipo 07)
-- ✅ **Notas de Débito** (Tipo 08)
-- ✅ **Guías de Remisión** (Tipo 09)
-- ✅ **Resúmenes Diarios** (RC)
-- ✅ **Comunicaciones de Baja** (RA)
-- ✅ **Retenciones y Percepciones**
+- **Facturas** (Tipo 01)
+- **Boletas de Venta** (Tipo 03) 
+- **Notas de Crédito** (Tipo 07)
+- **Notas de Débito** (Tipo 08)
+- **Guías de Remisión** (Tipo 09)
+- **Resúmenes Diarios** (RC)
+- **Comunicaciones de Baja** (RA)
+- **Retenciones y Percepciones**
 
 ### Funcionalidades del Sistema
-- 🏢 **Multi-empresa**: Gestión de múltiples empresas y sucursales
-- 🔐 **Autenticación OAuth2** para APIs de SUNAT
-- 📄 **Generación automática de PDF** con diseño profesional
-- 📊 **Consulta de CPE** (Comprobantes de Pago Electrónicos)
-- 💰 **Cálculo automático de impuestos** (IGV, IVAP, ISC, ICBPER)
-- 📱 **API REST completa** con documentación
-- 🔄 **Sincronización con SUNAT** en tiempo real
-- 📈 **Reportes y estadísticas** de facturación
+- **Multi-empresa**: Gestión de múltiples empresas y sucursales
+- **Autenticación OAuth2** para APIs de SUNAT
+- **Generación automática de PDF** con diseño profesional
+- **Consulta de CPE** (Comprobantes de Pago Electrónicos)
+- **Cálculo automático de impuestos** (IGV, IVAP, ISC, ICBPER)
+- **API REST completa** con documentación
+- **Sincronización con SUNAT** en tiempo real
+- **Reportes y estadísticas** de facturación
 
 ### Tecnologías Utilizadas
 - **Framework**: Laravel 12 con PHP 8.2+
@@ -44,7 +44,7 @@ Sistema completo de facturación electrónica para SUNAT Perú desarrollado con 
 - **Authentication**: Laravel Sanctum
 - **Testing**: PestPHP
 
-## 🛠️ Instalación
+## Instalación
 
 ### Requisitos Previos
 - PHP 8.2 o superior
@@ -96,7 +96,7 @@ openssl pkcs12 -in certificado.pfx -out certificado_correcto.pem -nodes
 
 **Nota:** Este comando te pedirá la contraseña de tu certificado .pfx y generará un archivo .pem que puedes usar directamente en el sistema.
 
-## 🏗️ Arquitectura del Sistema
+## Arquitectura del Sistema
 
 ### Estructura de Modelos
 - **Company**: Empresas emisoras
@@ -115,44 +115,33 @@ openssl pkcs12 -in certificado.pfx -out certificado_correcto.pem -nodes
 - **SeriesService**: Gestión de series documentarias
 
 
+## Licencia y Derechos de Uso
 
+**© 2025 - Todos los derechos reservados**
 
+### Términos de Uso
 
+Este software es **propiedad privada** y su uso está sujeto a las siguientes condiciones:
 
-**Ejemplos listos para usar:**
-En el directorio `ejemplos-postman/` encontrarás colecciones completas listas para importar en Postman o herramientas similares, con ejemplos de:
-- Facturas, boletas y notas
-- Guías de remisión
-- Consultas CPE
-- Configuraciones avanzadas
+#### Permitido:
+- Uso interno para desarrollo y pruebas
+- Evaluación del código con fines educativos
+- Uso bajo licencia comercial (contactar al autor)
 
-## ⚖️ Licencia y Uso
+### Protección de Propiedad Intelectual
 
-**Este proyecto es de uso libre bajo las siguientes condiciones:**
+- El código fuente, la arquitectura y el diseño son propiedad intelectual protegida
+- El uso no autorizado puede resultar en acciones legales
+- Para licencias comerciales o colaboraciones, contactar al autor
 
-- ✅ Puedes usar, modificar y distribuir el código libremente
-- ✅ Puedes usarlo para proyectos comerciales y personales
-- ⚠️ **Todo el uso es bajo tu propia responsabilidad**
-- ⚠️ No se ofrece garantía ni soporte oficial
-- ⚠️ Debes cumplir con las normativas de SUNAT de tu país
+### Descargo de Responsabilidad
+- El usuario es responsable de cumplir con las normativas de SUNAT
+- Se requiere contar con certificados digitales válidos de SUNAT
 
-### Importante
-- Asegúrate de tener los certificados digitales válidos de SUNAT
-- Configura correctamente los endpoints según tu ambiente (beta/producción)
-- Realiza pruebas exhaustivas antes de usar en producción
-- Mantén actualizadas las librerías de seguridad
+### Contacto para Licencias
 
-
-### 📧 Contribuciones
-- Fork el proyecto
-- Crea una rama para tu feature
-- Envía un pull request
+Para adquirir una licencia comercial o consultar sobre el uso del software, contactar al autor del proyecto.
 
 ---
 
-
----
-
-**⚡ Desarrollado con Laravel 12 y Greenter 5.1 para la comunidad peruana**
-
-*"Facilitando la facturación electrónica en Perú - Un documento a la vez"*
+Desarrollado con Laravel 12 y Greenter 5.1 para facturación electrónica en Perú.
