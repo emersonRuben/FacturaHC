@@ -27,12 +27,10 @@ return new class extends Migration
         }
         
         // Actualizar la estructura del ENUM removiendo tipos no utilizados
-        DB::statement("ALTER TABLE company_configurations MODIFY COLUMN config_type ENUM(
-            'tax_settings',
-            'invoice_settings', 
-            'gre_settings',
-            'document_settings'
-        ) NOT NULL");
+        // Solo ejecutar si NO es SQLite (Railway usa MySQL)
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement("ALTER TABLE company_configurations MODIFY config_type ENUM('tax_settings','invoice_settings','gre_settings','document_settings') NOT NULL");
+        }
         
         // Asegurar que existen configuraciones básicas para empresas existentes
         $companies = DB::table('companies')->where('activo', 1)->get();
@@ -148,18 +146,9 @@ return new class extends Migration
     public function down(): void
     {
         // Revertir cambios - restaurar ENUM original
-        DB::statement("ALTER TABLE company_configurations MODIFY COLUMN config_type ENUM(
-            'sunat_credentials',
-            'service_endpoints',
-            'tax_settings',
-            'invoice_settings',
-            'gre_settings',
-            'file_settings',
-            'document_settings',
-            'summary_settings',
-            'void_settings',
-            'notification_settings',
-            'security_settings'
-        ) NOT NULL");
+        // Solo ejecutar si NO es SQLite
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement("ALTER TABLE company_configurations MODIFY config_type ENUM('sunat_credentials','service_endpoints','tax_settings','invoice_settings','gre_settings','file_settings','document_settings','summary_settings','void_settings','notification_settings','security_settings') NOT NULL");
+        }
     }
 };
