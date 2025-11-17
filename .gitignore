@@ -1,0 +1,85 @@
+# Laravel
+*.log
+.env
+.env.backup
+.env.production
+.env.local
+.phpactor.json
+.phpunit.result.cache
+/vendor
+/node_modules
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+/storage/pail
+
+# Certificados sensibles
+/storage/app/private/certificado/*.pem
+/storage/app/private/certificado/*.pfx
+/storage/app/private/certificado/*.p12
+/storage/app/public/certificado/*.pem
+/storage/app/public/certificado/*.pfx
+/storage/app/public/certificado/*.p12
+/storage/app/temp/certificados/
+certificado_prueba/
+*.pem
+*.pfx
+*.p12
+
+# IDEs
+/.fleet
+/.idea
+/.nova
+/.phpunit.cache
+/.vscode
+/.zed
+auth.json
+
+# OS
+.DS_Store
+Thumbs.db
+*~
+*.swp
+*.swo
+
+# Homestead
+Homestead.json
+Homestead.yaml
+
+# Docker local
+docker-compose.override.yml
+
+# Postman (opcional, comentar si quieres subirlos)
+ejemplos-postman/
+
+# Storage temporal
+storage/app/public/xml/*
+storage/app/public/cdr/*
+storage/app/public/pdf/*
+storage/logs/*
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*
+!storage/logs/.gitkeep
+!storage/framework/cache/.gitkeep
+!storage/framework/sessions/.gitkeep
+!storage/framework/views/.gitkeep
+
+# Bootstrap cache
+bootstrap/cache/*
+!bootstrap/cache/.gitkeep
+
+# NPM
+npm-debug.log
+yarn-error.log
+
+# Composer
+composer.phar
+
+# Testing
+.phpunit.result.cache
+coverage/
+
+# Railway
+.env.railway

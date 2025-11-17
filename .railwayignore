@@ -1,0 +1,8 @@
+node_modules/
+.git/
+.env.local
+tests/
+storage/logs/*
+!storage/logs/.gitkeep
+*.log
+.phpunit.result.cache

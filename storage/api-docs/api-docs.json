@@ -1,0 +1,2959 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API SUNAT - Sistema de Facturación Electrónica",
+        "description": "API REST para emisión de comprobantes electrónicos SUNAT (Facturas, Boletas, Notas de Crédito/Débito)",
+        "contact": {
+            "name": "Soporte Técnico",
+            "email": "soporte@tuempresa.com"
+        },
+        "license": {
+            "name": "Privada",
+            "url": "https://tuempresa.com/license"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://127.0.0.1:8000",
+            "description": "Servidor de Desarrollo Local"
+        },
+        {
+            "url": "http://localhost:8000",
+            "description": "Servidor Local Docker"
+        }
+    ],
+    "paths": {
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "Autenticación"
+                ],
+                "summary": "Iniciar sesión",
+                "description": "Autenticación de usuario y obtención de token de acceso",
+                "operationId": "dd51a484b7fa0f97c7680fdbde14cf5f",
+                "requestBody": {
+                    "description": "Credenciales de acceso",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "description": "Correo electrónico del usuario",
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "admin@example.com"
+                                    },
+                                    "password": {
+                                        "description": "Contraseña del usuario",
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "Password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login exitoso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Login exitoso"
+                                        },
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Admin Principal"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "admin@example.com"
+                                                },
+                                                "role": {
+                                                    "type": "string",
+                                                    "example": "Super Administrador"
+                                                },
+                                                "company_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "access_token": {
+                                            "type": "string",
+                                            "example": "1|cMSlQ0p5NJbcQl1V3KRPuU0wZOFOpGVxWXJXKJ1Wb7a86a41"
+                                        },
+                                        "token_type": {
+                                            "type": "string",
+                                            "example": "Bearer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Credenciales incorrectas",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Credenciales incorrectas"
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/logout": {
+            "post": {
+                "tags": [
+                    "Autenticación"
+                ],
+                "summary": "Cerrar sesión",
+                "description": "Invalida el token de acceso actual del usuario",
+                "operationId": "307ed0512855922b2280792376bb2095",
+                "responses": {
+                    "200": {
+                        "description": "Sesión cerrada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Logout exitoso"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/me": {
+            "get": {
+                "tags": [
+                    "Autenticación"
+                ],
+                "summary": "Obtener información del usuario autenticado",
+                "description": "Retorna los datos del usuario actualmente autenticado",
+                "operationId": "5389aaa95512ef0b6ec88f262ecee7f0",
+                "responses": {
+                    "200": {
+                        "description": "Información del usuario obtenida exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Admin Principal"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "admin@example.com"
+                                                },
+                                                "user_type": {
+                                                    "type": "string",
+                                                    "example": "system"
+                                                },
+                                                "active": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "role": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "super_admin"
+                                                        },
+                                                        "display_name": {
+                                                            "type": "string",
+                                                            "example": "Super Administrador"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "company": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "razon_social": {
+                                                            "type": "string",
+                                                            "example": "MI EMPRESA SAC"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/boletas": {
+            "get": {
+                "tags": [
+                    "Boletas"
+                ],
+                "summary": "Listar todas las boletas",
+                "description": "Obtiene un listado paginado de boletas con filtros opcionales",
+                "operationId": "1f0e3315e9e928ea2f260478357deeb9",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Número de página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Resultados por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15,
+                            "example": 15
+                        }
+                    },
+                    {
+                        "name": "company_id",
+                        "in": "query",
+                        "description": "Filtrar por empresa",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de boletas obtenida exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "numero_completo": {
+                                                        "type": "string",
+                                                        "example": "B001-000001"
+                                                    },
+                                                    "fecha_emision": {
+                                                        "type": "string",
+                                                        "format": "date",
+                                                        "example": "2025-11-07"
+                                                    },
+                                                    "mto_imp_venta": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 118
+                                                    },
+                                                    "estado_sunat": {
+                                                        "type": "string",
+                                                        "example": "ACEPTADO"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "pagination": {
+                                            "properties": {
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 50
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Boletas"
+                ],
+                "summary": "Crear una nueva boleta",
+                "description": "Crea una nueva boleta de venta electrónica",
+                "operationId": "d53e262e69420f3e317c0427c492dab0",
+                "requestBody": {
+                    "description": "Datos de la boleta a crear",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "company_id",
+                                    "branch_id",
+                                    "client_id",
+                                    "serie",
+                                    "fecha_emision",
+                                    "moneda",
+                                    "items"
+                                ],
+                                "properties": {
+                                    "company_id": {
+                                        "description": "ID de la empresa",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "branch_id": {
+                                        "description": "ID de la sucursal",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "client_id": {
+                                        "description": "ID del cliente",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "serie": {
+                                        "description": "Serie de la boleta",
+                                        "type": "string",
+                                        "example": "B001"
+                                    },
+                                    "fecha_emision": {
+                                        "description": "Fecha de emisión",
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-11-17"
+                                    },
+                                    "moneda": {
+                                        "description": "Código de moneda (PEN/USD)",
+                                        "type": "string",
+                                        "example": "PEN"
+                                    },
+                                    "tipo_operacion": {
+                                        "description": "Tipo de operación SUNAT",
+                                        "type": "string",
+                                        "example": "0101"
+                                    },
+                                    "items": {
+                                        "description": "Items de la boleta",
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "codigo": {
+                                                    "type": "string",
+                                                    "example": "PROD001"
+                                                },
+                                                "descripcion": {
+                                                    "type": "string",
+                                                    "example": "Producto de prueba"
+                                                },
+                                                "cantidad": {
+                                                    "type": "number",
+                                                    "example": 2
+                                                },
+                                                "unidad_medida": {
+                                                    "type": "string",
+                                                    "example": "NIU"
+                                                },
+                                                "precio_unitario": {
+                                                    "type": "number",
+                                                    "example": 50
+                                                },
+                                                "tipo_afectacion_igv": {
+                                                    "type": "string",
+                                                    "example": "10"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Boleta creada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Boleta creada exitosamente"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "numero_completo": {
+                                                    "type": "string",
+                                                    "example": "B001-000002"
+                                                },
+                                                "fecha_emision": {
+                                                    "type": "string",
+                                                    "example": "2025-11-17"
+                                                },
+                                                "mto_imp_venta": {
+                                                    "type": "number",
+                                                    "example": 118
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/boletas/{id}": {
+            "get": {
+                "tags": [
+                    "Boletas"
+                ],
+                "summary": "Obtener detalle de una boleta",
+                "description": "Obtiene la información detallada de una boleta específica",
+                "operationId": "4efc398107139bcc337b4d69c5307efd",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la boleta",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalle de la boleta",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "numero_completo": {
+                                                    "type": "string",
+                                                    "example": "B001-000001"
+                                                },
+                                                "serie": {
+                                                    "type": "string",
+                                                    "example": "B001"
+                                                },
+                                                "correlativo": {
+                                                    "type": "string",
+                                                    "example": "000001"
+                                                },
+                                                "fecha_emision": {
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "example": "2025-11-17"
+                                                },
+                                                "moneda": {
+                                                    "type": "string",
+                                                    "example": "PEN"
+                                                },
+                                                "mto_imp_venta": {
+                                                    "type": "number",
+                                                    "example": 118
+                                                },
+                                                "estado_sunat": {
+                                                    "type": "string",
+                                                    "example": "ACEPTADO"
+                                                },
+                                                "xml_path": {
+                                                    "type": "string",
+                                                    "example": "boletas/xml/17112025/B001-000001.xml"
+                                                },
+                                                "cdr_path": {
+                                                    "type": "string",
+                                                    "example": "boletas/cdr/17112025/R-B001-000001.zip"
+                                                },
+                                                "pdf_path": {
+                                                    "type": "string",
+                                                    "example": "boletas/pdf/17112025/B001-000001.pdf"
+                                                },
+                                                "company": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "razon_social": {
+                                                            "type": "string",
+                                                            "example": "MI EMPRESA SAC"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "client": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "nombre": {
+                                                            "type": "string",
+                                                            "example": "CLIENTE PRUEBA"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Boleta no encontrada"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/boletas/{id}/send-sunat": {
+            "post": {
+                "tags": [
+                    "Boletas"
+                ],
+                "summary": "Enviar boleta a SUNAT",
+                "description": "Envía la boleta a SUNAT para su validación y genera el XML y CDR automáticamente",
+                "operationId": "8f2a2a3e8e4829b043674bb247227a26",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la boleta",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Boleta enviada exitosamente a SUNAT",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Boleta enviada exitosamente a SUNAT"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "numero_completo": {
+                                                    "type": "string",
+                                                    "example": "B001-000001"
+                                                },
+                                                "estado_sunat": {
+                                                    "type": "string",
+                                                    "example": "ACEPTADO"
+                                                },
+                                                "xml_path": {
+                                                    "type": "string",
+                                                    "example": "boletas/xml/17112025/B001-000001.xml"
+                                                },
+                                                "cdr_path": {
+                                                    "type": "string",
+                                                    "example": "boletas/cdr/17112025/R-B001-000001.zip"
+                                                },
+                                                "codigo_hash": {
+                                                    "type": "string",
+                                                    "example": "abc123..."
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Boleta ya fue enviada a SUNAT"
+                    },
+                    "404": {
+                        "description": "Boleta no encontrada"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/boletas/{id}/download-xml": {
+            "get": {
+                "tags": [
+                    "Boletas"
+                ],
+                "summary": "Descargar XML de la boleta",
+                "description": "Descarga el archivo XML de la boleta generado por SUNAT",
+                "operationId": "03d7f1e3adbf04e637995a30d0783672",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la boleta",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Archivo XML descargado",
+                        "content": {
+                            "application/xml": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "XML no encontrado"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/boletas/{id}/download-cdr": {
+            "get": {
+                "tags": [
+                    "Boletas"
+                ],
+                "summary": "Descargar CDR de la boleta",
+                "description": "Descarga el Comprobante de Recepción (CDR) generado por SUNAT en formato ZIP",
+                "operationId": "cba66ebfdd6081facf3370056a097b39",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la boleta",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Archivo CDR (ZIP) descargado",
+                        "content": {
+                            "application/zip": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "CDR no encontrado"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/boletas/{id}/download-pdf": {
+            "get": {
+                "tags": [
+                    "Boletas"
+                ],
+                "summary": "Descargar PDF de la boleta",
+                "description": "Descarga el archivo PDF de la boleta previamente generado",
+                "operationId": "8269126b6d4181e9805ee46def92834b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la boleta",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Archivo PDF descargado",
+                        "content": {
+                            "application/pdf": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "PDF no encontrado"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/boletas/{id}/generate-pdf": {
+            "post": {
+                "tags": [
+                    "Boletas"
+                ],
+                "summary": "Generar PDF de la boleta",
+                "description": "Genera el archivo PDF de la boleta con el formato configurado",
+                "operationId": "9fa0cff7f6e1a0b94df98853c71775a2",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la boleta",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "format",
+                        "in": "query",
+                        "description": "Formato del PDF (A4, A5, TICKET)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "A4",
+                            "enum": [
+                                "A4",
+                                "A5",
+                                "TICKET"
+                            ],
+                            "example": "A4"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "PDF generado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "PDF generado exitosamente"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "numero_completo": {
+                                                    "type": "string",
+                                                    "example": "B001-000001"
+                                                },
+                                                "pdf_path": {
+                                                    "type": "string",
+                                                    "example": "boletas/pdf/17112025/B001-000001.pdf"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Boleta no encontrada"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/branches": {
+            "get": {
+                "tags": [
+                    "Sucursales"
+                ],
+                "summary": "Listar sucursales",
+                "description": "Obtiene el listado de sucursales, con opción de filtrar por empresa",
+                "operationId": "3db09dc381c1a9169fad03df73dc5cab",
+                "parameters": [
+                    {
+                        "name": "company_id",
+                        "in": "query",
+                        "description": "Filtrar por ID de empresa",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado de sucursales",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "company_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "codigo": {
+                                                        "type": "string",
+                                                        "example": "0000"
+                                                    },
+                                                    "nombre": {
+                                                        "type": "string",
+                                                        "example": "Sucursal Principal"
+                                                    },
+                                                    "direccion": {
+                                                        "type": "string",
+                                                        "example": "Av. Principal 123"
+                                                    },
+                                                    "ubigeo": {
+                                                        "type": "string",
+                                                        "example": "150101"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Sucursales"
+                ],
+                "summary": "Crear sucursal",
+                "description": "Crea una nueva sucursal o establecimiento anexo",
+                "operationId": "b51f2f2107e0c7ebde909393cd27c276",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "company_id",
+                                    "codigo",
+                                    "nombre",
+                                    "direccion",
+                                    "ubigeo"
+                                ],
+                                "properties": {
+                                    "company_id": {
+                                        "description": "ID de la empresa",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "codigo": {
+                                        "description": "Código de establecimiento SUNAT (0000=principal)",
+                                        "type": "string",
+                                        "example": "0000"
+                                    },
+                                    "nombre": {
+                                        "description": "Nombre de la sucursal",
+                                        "type": "string",
+                                        "example": "Sucursal Principal"
+                                    },
+                                    "direccion": {
+                                        "description": "Dirección fiscal",
+                                        "type": "string",
+                                        "example": "Av. Principal 123"
+                                    },
+                                    "ubigeo": {
+                                        "description": "Código de ubigeo (6 dígitos)",
+                                        "type": "string",
+                                        "example": "150101"
+                                    },
+                                    "distrito": {
+                                        "description": "Distrito",
+                                        "type": "string",
+                                        "example": "Lima"
+                                    },
+                                    "provincia": {
+                                        "description": "Provincia",
+                                        "type": "string",
+                                        "example": "Lima"
+                                    },
+                                    "departamento": {
+                                        "description": "Departamento",
+                                        "type": "string",
+                                        "example": "Lima"
+                                    },
+                                    "telefono": {
+                                        "description": "Teléfono",
+                                        "type": "string",
+                                        "example": "014567890"
+                                    },
+                                    "email": {
+                                        "description": "Correo electrónico",
+                                        "type": "string",
+                                        "example": "sucursal@empresa.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Sucursal creada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Sucursal creada exitosamente"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Empresa no encontrada"
+                    },
+                    "422": {
+                        "description": "Errores de validación"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/clients": {
+            "get": {
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "Listar clientes",
+                "description": "Obtiene un listado paginado de clientes con opciones de filtrado por empresa, tipo de documento y búsqueda por texto",
+                "operationId": "cc561a4afa5c5a97b24c6eb25f15ac3d",
+                "parameters": [
+                    {
+                        "name": "company_id",
+                        "in": "query",
+                        "description": "Filtrar por ID de empresa",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "tipo_documento",
+                        "in": "query",
+                        "description": "Tipo de documento: 1=DNI, 4=CE, 6=RUC, 7=Pasaporte, 0=Sin documento",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "1",
+                                "4",
+                                "6",
+                                "7",
+                                "0"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Búsqueda por número de documento, razón social o nombre comercial",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "12345678"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Número de página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado de clientes obtenido correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "company_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "tipo_documento": {
+                                                        "type": "string",
+                                                        "example": "6"
+                                                    },
+                                                    "numero_documento": {
+                                                        "type": "string",
+                                                        "example": "20123456789"
+                                                    },
+                                                    "razon_social": {
+                                                        "type": "string",
+                                                        "example": "EMPRESA CLIENTE SAC"
+                                                    },
+                                                    "nombre_comercial": {
+                                                        "type": "string",
+                                                        "example": "Cliente SAC"
+                                                    },
+                                                    "direccion": {
+                                                        "type": "string",
+                                                        "example": "Av. Principal 123"
+                                                    },
+                                                    "telefono": {
+                                                        "type": "string",
+                                                        "example": "987654321"
+                                                    },
+                                                    "email": {
+                                                        "type": "string",
+                                                        "example": "cliente@empresa.com"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 50
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 20
+                                                },
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "500": {
+                        "description": "Error del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "Crear nuevo cliente",
+                "description": "Crea un nuevo cliente (persona o empresa) que podrá recibir comprobantes electrónicos",
+                "operationId": "2bf3bc69d90a260fd5df0549e4446321",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "tipo_documento",
+                                    "numero_documento",
+                                    "razon_social"
+                                ],
+                                "properties": {
+                                    "company_id": {
+                                        "description": "ID de la empresa (opcional, se tomará del usuario autenticado)",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "tipo_documento": {
+                                        "description": "1=DNI, 4=CE, 6=RUC, 7=Pasaporte, 0=Sin documento",
+                                        "type": "string",
+                                        "enum": [
+                                            "1",
+                                            "4",
+                                            "6",
+                                            "7",
+                                            "0"
+                                        ],
+                                        "example": "6"
+                                    },
+                                    "numero_documento": {
+                                        "description": "Número de documento",
+                                        "type": "string",
+                                        "maxLength": 20,
+                                        "example": "20123456789"
+                                    },
+                                    "razon_social": {
+                                        "description": "Razón social o nombre completo",
+                                        "type": "string",
+                                        "maxLength": 255,
+                                        "example": "EMPRESA CLIENTE SAC"
+                                    },
+                                    "nombre_comercial": {
+                                        "description": "Nombre comercial (opcional)",
+                                        "type": "string",
+                                        "maxLength": 255,
+                                        "example": "Cliente SAC"
+                                    },
+                                    "direccion": {
+                                        "description": "Dirección fiscal",
+                                        "type": "string",
+                                        "maxLength": 255,
+                                        "example": "Av. Principal 123"
+                                    },
+                                    "ubigeo": {
+                                        "description": "Código de ubigeo (6 dígitos)",
+                                        "type": "string",
+                                        "maxLength": 6,
+                                        "minLength": 6,
+                                        "example": "150101"
+                                    },
+                                    "distrito": {
+                                        "description": "Distrito",
+                                        "type": "string",
+                                        "maxLength": 100,
+                                        "example": "Lima"
+                                    },
+                                    "provincia": {
+                                        "description": "Provincia",
+                                        "type": "string",
+                                        "maxLength": 100,
+                                        "example": "Lima"
+                                    },
+                                    "departamento": {
+                                        "description": "Departamento",
+                                        "type": "string",
+                                        "maxLength": 100,
+                                        "example": "Lima"
+                                    },
+                                    "telefono": {
+                                        "description": "Teléfono de contacto",
+                                        "type": "string",
+                                        "maxLength": 20,
+                                        "example": "987654321"
+                                    },
+                                    "email": {
+                                        "description": "Correo electrónico",
+                                        "type": "string",
+                                        "format": "email",
+                                        "maxLength": 255,
+                                        "example": "cliente@empresa.com"
+                                    },
+                                    "activo": {
+                                        "description": "Estado del cliente (true=activo, false=inactivo)",
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Cliente creado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cliente creado exitosamente"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "company_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "tipo_documento": {
+                                                    "type": "string",
+                                                    "example": "6"
+                                                },
+                                                "numero_documento": {
+                                                    "type": "string",
+                                                    "example": "20123456789"
+                                                },
+                                                "razon_social": {
+                                                    "type": "string",
+                                                    "example": "EMPRESA CLIENTE SAC"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "cliente@empresa.com"
+                                                },
+                                                "company": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "ruc": {
+                                                            "type": "string",
+                                                            "example": "20123456789"
+                                                        },
+                                                        "razon_social": {
+                                                            "type": "string",
+                                                            "example": "MI EMPRESA SAC"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Cliente duplicado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ya existe un cliente con el mismo tipo y número de documento en esta empresa"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Errores de validación",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Errores de validación"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "500": {
+                        "description": "Error del servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/clients/{id}": {
+            "get": {
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "Obtener detalle de un cliente",
+                "description": "Obtiene la información completa de un cliente específico",
+                "operationId": "9497b9df43a3cdb3e5e03ed30a4b05a2",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del cliente",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cliente obtenido correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "company_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "tipo_documento": {
+                                                    "type": "string",
+                                                    "example": "6"
+                                                },
+                                                "numero_documento": {
+                                                    "type": "string",
+                                                    "example": "20123456789"
+                                                },
+                                                "razon_social": {
+                                                    "type": "string",
+                                                    "example": "EMPRESA CLIENTE SAC"
+                                                },
+                                                "direccion": {
+                                                    "type": "string",
+                                                    "example": "Av. Principal 123"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "cliente@empresa.com"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Cliente no encontrado"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "Actualizar cliente",
+                "description": "Actualiza la información de un cliente existente",
+                "operationId": "51bdc17bb69ddad4f820b22008a0fc9f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del cliente",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "company_id",
+                                    "tipo_documento",
+                                    "numero_documento",
+                                    "razon_social"
+                                ],
+                                "properties": {
+                                    "company_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "tipo_documento": {
+                                        "type": "string",
+                                        "enum": [
+                                            "1",
+                                            "4",
+                                            "6",
+                                            "7",
+                                            "0"
+                                        ],
+                                        "example": "6"
+                                    },
+                                    "numero_documento": {
+                                        "type": "string",
+                                        "example": "20123456789"
+                                    },
+                                    "razon_social": {
+                                        "type": "string",
+                                        "example": "EMPRESA CLIENTE SAC ACTUALIZADA"
+                                    },
+                                    "nombre_comercial": {
+                                        "type": "string",
+                                        "example": "Cliente SAC"
+                                    },
+                                    "direccion": {
+                                        "type": "string",
+                                        "example": "Av. Principal 456"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "cliente@empresa.com"
+                                    },
+                                    "telefono": {
+                                        "type": "string",
+                                        "example": "987654321"
+                                    },
+                                    "activo": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cliente actualizado correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cliente actualizado exitosamente"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Cliente no encontrado"
+                    },
+                    "422": {
+                        "description": "Errores de validación"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "Eliminar cliente",
+                "description": "Marca un cliente como inactivo (eliminación lógica). No elimina físicamente el registro.",
+                "operationId": "d6acd17a779d9287c110286164ba1388",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del cliente",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cliente marcado como inactivo correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cliente marcado como inactivo correctamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Cliente no encontrado"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/credit-notes": {
+            "get": {
+                "tags": [
+                    "Notas de Crédito"
+                ],
+                "summary": "Listar notas de crédito",
+                "description": "Obtiene un listado paginado de notas de crédito con filtros",
+                "operationId": "c0558304d5c17dd33e5bbdff42223bcf",
+                "parameters": [
+                    {
+                        "name": "company_id",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "branch_id",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "estado_sunat",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tipo_doc_afectado",
+                        "in": "query",
+                        "schema": {
+                            "description": "01=Factura, 03=Boleta",
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "fecha_desde",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "fecha_hasta",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado de notas de crédito"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Notas de Crédito"
+                ],
+                "summary": "Crear nota de crédito",
+                "description": "Crea una nueva nota de crédito para anular o corregir una factura o boleta",
+                "operationId": "1447accac064a035c5987caf07af316e",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "company_id",
+                                    "branch_id",
+                                    "client_id",
+                                    "serie",
+                                    "tipo_doc_afectado",
+                                    "num_doc_afectado",
+                                    "tipo_nota_credito",
+                                    "motivo_nota",
+                                    "items"
+                                ],
+                                "properties": {
+                                    "company_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "branch_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "client_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "serie": {
+                                        "description": "Serie para nota de crédito",
+                                        "type": "string",
+                                        "example": "FC01"
+                                    },
+                                    "tipo_doc_afectado": {
+                                        "description": "01=Factura, 03=Boleta",
+                                        "type": "string",
+                                        "example": "01"
+                                    },
+                                    "num_doc_afectado": {
+                                        "description": "Serie-Número del documento a afectar",
+                                        "type": "string",
+                                        "example": "F001-000001"
+                                    },
+                                    "tipo_nota_credito": {
+                                        "description": "Código de motivo SUNAT",
+                                        "type": "string",
+                                        "example": "01"
+                                    },
+                                    "motivo_nota": {
+                                        "type": "string",
+                                        "example": "Anulación de la operación"
+                                    },
+                                    "moneda": {
+                                        "description": "PEN o USD",
+                                        "type": "string",
+                                        "example": "PEN"
+                                    },
+                                    "items": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "descripcion": {
+                                                    "type": "string",
+                                                    "example": "Producto 1"
+                                                },
+                                                "cantidad": {
+                                                    "type": "number",
+                                                    "example": 1
+                                                },
+                                                "precio_unitario": {
+                                                    "type": "number",
+                                                    "example": 100
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Nota de crédito creada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Nota de crédito creada correctamente"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Errores de validación"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/credit-notes/{id}/send-sunat": {
+            "post": {
+                "tags": [
+                    "Notas de Crédito"
+                ],
+                "summary": "Enviar nota de crédito a SUNAT",
+                "description": "Envía la nota de crédito a SUNAT para su validación. Genera XML y recibe CDR.",
+                "operationId": "77805984c7c3ee60d2507764ec411c95",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la nota de crédito",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Nota de crédito enviada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Nota de crédito enviada a SUNAT exitosamente"
+                                        },
+                                        "estado_sunat": {
+                                            "type": "string",
+                                            "example": "ACEPTADO"
+                                        },
+                                        "xml_path": {
+                                            "type": "string",
+                                            "example": "notas_credito/xml/17112025/FC01-000001.xml"
+                                        },
+                                        "cdr_path": {
+                                            "type": "string",
+                                            "example": "notas_credito/cdr/17112025/R-FC01-000001.zip"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Nota de crédito no encontrada"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/debit-notes": {
+            "get": {
+                "tags": [
+                    "Notas de Débito"
+                ],
+                "summary": "Listar notas de débito",
+                "description": "Obtiene un listado paginado de notas de débito",
+                "operationId": "37779ff79aa7aad9ed34c46c1484b409",
+                "parameters": [
+                    {
+                        "name": "company_id",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "estado_sunat",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado de notas de débito"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/invoices": {
+            "get": {
+                "tags": [
+                    "Facturas"
+                ],
+                "summary": "Listar todas las facturas",
+                "description": "Obtiene un listado paginado de facturas con filtros opcionales",
+                "operationId": "89f5460c37edf14349cb1b223d09f2f6",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Número de página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Resultados por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15,
+                            "example": 15
+                        }
+                    },
+                    {
+                        "name": "company_id",
+                        "in": "query",
+                        "description": "Filtrar por empresa",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "estado_sunat",
+                        "in": "query",
+                        "description": "Filtrar por estado SUNAT",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "PENDIENTE",
+                                "ACEPTADO",
+                                "RECHAZADO"
+                            ],
+                            "example": "ACEPTADO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de facturas obtenida exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "numero_completo": {
+                                                        "type": "string",
+                                                        "example": "F001-000001"
+                                                    },
+                                                    "fecha_emision": {
+                                                        "type": "string",
+                                                        "format": "date",
+                                                        "example": "2025-11-17"
+                                                    },
+                                                    "mto_imp_venta": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 236
+                                                    },
+                                                    "estado_sunat": {
+                                                        "type": "string",
+                                                        "example": "ACEPTADO"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Facturas"
+                ],
+                "summary": "Crear una nueva factura",
+                "description": "Crea una nueva factura electrónica",
+                "operationId": "3b8daf1fa0802958ea4fbe416868830a",
+                "requestBody": {
+                    "description": "Datos de la factura a crear",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "company_id",
+                                    "branch_id",
+                                    "client_id",
+                                    "serie",
+                                    "fecha_emision",
+                                    "moneda",
+                                    "items"
+                                ],
+                                "properties": {
+                                    "company_id": {
+                                        "description": "ID de la empresa",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "branch_id": {
+                                        "description": "ID de la sucursal",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "client_id": {
+                                        "description": "ID del cliente",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "serie": {
+                                        "description": "Serie de la factura",
+                                        "type": "string",
+                                        "example": "F001"
+                                    },
+                                    "fecha_emision": {
+                                        "description": "Fecha de emisión",
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-11-17"
+                                    },
+                                    "fecha_vencimiento": {
+                                        "description": "Fecha de vencimiento",
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-12-17"
+                                    },
+                                    "moneda": {
+                                        "description": "Código de moneda (PEN/USD)",
+                                        "type": "string",
+                                        "example": "PEN"
+                                    },
+                                    "tipo_operacion": {
+                                        "description": "Tipo de operación SUNAT",
+                                        "type": "string",
+                                        "example": "0101"
+                                    },
+                                    "items": {
+                                        "description": "Items de la factura",
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "codigo": {
+                                                    "type": "string",
+                                                    "example": "PROD001"
+                                                },
+                                                "descripcion": {
+                                                    "type": "string",
+                                                    "example": "Producto de prueba"
+                                                },
+                                                "cantidad": {
+                                                    "type": "number",
+                                                    "example": 2
+                                                },
+                                                "unidad_medida": {
+                                                    "type": "string",
+                                                    "example": "NIU"
+                                                },
+                                                "precio_unitario": {
+                                                    "type": "number",
+                                                    "example": 100
+                                                },
+                                                "tipo_afectacion_igv": {
+                                                    "type": "string",
+                                                    "example": "10"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Factura creada exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Factura creada exitosamente"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "numero_completo": {
+                                                    "type": "string",
+                                                    "example": "F001-000001"
+                                                },
+                                                "fecha_emision": {
+                                                    "type": "string",
+                                                    "example": "2025-11-17"
+                                                },
+                                                "mto_imp_venta": {
+                                                    "type": "number",
+                                                    "example": 236
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/invoices/{id}": {
+            "get": {
+                "tags": [
+                    "Facturas"
+                ],
+                "summary": "Obtener detalle de una factura",
+                "description": "Obtiene la información completa de una factura específica, incluyendo relaciones con empresa, sucursal y cliente",
+                "operationId": "988b7eae8a56fdde9957c6afe333c9c9",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la factura",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Factura obtenida correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Factura obtenida correctamente"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "company_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "branch_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "client_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "tipo_comprobante": {
+                                                    "type": "string",
+                                                    "example": "01"
+                                                },
+                                                "serie": {
+                                                    "type": "string",
+                                                    "example": "F001"
+                                                },
+                                                "numero": {
+                                                    "type": "string",
+                                                    "example": "000001"
+                                                },
+                                                "fecha_emision": {
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "example": "2025-01-17"
+                                                },
+                                                "fecha_vencimiento": {
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "example": "2025-01-17"
+                                                },
+                                                "moneda": {
+                                                    "type": "string",
+                                                    "example": "PEN"
+                                                },
+                                                "total_gravadas": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 100
+                                                },
+                                                "total_inafectas": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 0
+                                                },
+                                                "total_exoneradas": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 0
+                                                },
+                                                "total_gratuitas": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 0
+                                                },
+                                                "total_descuentos": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 0
+                                                },
+                                                "total_igv": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 18
+                                                },
+                                                "total": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 118
+                                                },
+                                                "estado_sunat": {
+                                                    "type": "string",
+                                                    "example": "ACEPTADO"
+                                                },
+                                                "observaciones_sunat": {
+                                                    "type": "string",
+                                                    "example": null
+                                                },
+                                                "company": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "razon_social": {
+                                                            "type": "string",
+                                                            "example": "MI EMPRESA SAC"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "branch": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "nombre": {
+                                                            "type": "string",
+                                                            "example": "Sucursal Principal"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "client": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "tipo_doc": {
+                                                            "type": "string",
+                                                            "example": "6"
+                                                        },
+                                                        "numero_doc": {
+                                                            "type": "string",
+                                                            "example": "20123456789"
+                                                        },
+                                                        "razon_social": {
+                                                            "type": "string",
+                                                            "example": "CLIENTE EJEMPLO SAC"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Factura no encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Factura no encontrada"
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "example": "No query results for model [App\\\\Models\\\\Invoice]"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/invoices/{id}/send-sunat": {
+            "post": {
+                "tags": [
+                    "Facturas"
+                ],
+                "summary": "Enviar factura a SUNAT",
+                "description": "Envía la factura a SUNAT para su validación y genera el XML y CDR automáticamente",
+                "operationId": "31d5bccc710f6637d27c4f14da5cc538",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la factura",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Factura enviada exitosamente a SUNAT",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Factura enviada exitosamente a SUNAT"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "numero_completo": {
+                                                    "type": "string",
+                                                    "example": "F001-000001"
+                                                },
+                                                "estado_sunat": {
+                                                    "type": "string",
+                                                    "example": "ACEPTADO"
+                                                },
+                                                "xml_path": {
+                                                    "type": "string",
+                                                    "example": "facturas/xml/17112025/F001-000001.xml"
+                                                },
+                                                "cdr_path": {
+                                                    "type": "string",
+                                                    "example": "facturas/cdr/17112025/R-F001-000001.zip"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Factura ya fue enviada a SUNAT"
+                    },
+                    "404": {
+                        "description": "Factura no encontrada"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/invoices/{id}/download-xml": {
+            "get": {
+                "tags": [
+                    "Facturas"
+                ],
+                "summary": "Descargar XML de la factura",
+                "description": "Descarga el archivo XML de la factura generado por SUNAT",
+                "operationId": "d0a3a044315501cd9fb1c4aaf356ba3e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la factura",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Archivo XML descargado",
+                        "content": {
+                            "application/xml": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "XML no encontrado"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/invoices/{id}/download-cdr": {
+            "get": {
+                "tags": [
+                    "Facturas"
+                ],
+                "summary": "Descargar CDR de la factura",
+                "description": "Descarga el Comprobante de Recepción (CDR) generado por SUNAT",
+                "operationId": "e2e8135766ec277e7d723dfc17a77f4c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la factura",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Archivo CDR (ZIP) descargado",
+                        "content": {
+                            "application/zip": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "CDR no encontrado"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/invoices/{id}/download-pdf": {
+            "get": {
+                "tags": [
+                    "Facturas"
+                ],
+                "summary": "Descargar PDF de la factura",
+                "description": "Descarga el archivo PDF de la factura previamente generado",
+                "operationId": "713145b611d9f0e9b835904b1ef18f53",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la factura",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Archivo PDF descargado",
+                        "content": {
+                            "application/pdf": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "PDF no encontrado"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/invoices/{id}/generate-pdf": {
+            "post": {
+                "tags": [
+                    "Facturas"
+                ],
+                "summary": "Generar PDF de la factura",
+                "description": "Genera el archivo PDF de la factura con el formato configurado",
+                "operationId": "baf5cbbd02842831274da34561f352a7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la factura",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "format",
+                        "in": "query",
+                        "description": "Formato del PDF",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "A4",
+                            "enum": [
+                                "A4",
+                                "A5",
+                                "TICKET"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "PDF generado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "PDF generado exitosamente"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "pdf_path": {
+                                                    "type": "string",
+                                                    "example": "facturas/pdf/17112025/F001-000001.pdf"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Factura no encontrada"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "description": "Ingrese su token de acceso obtenido del endpoint /api/auth/login",
+                "bearerFormat": "Sanctum",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Autenticación",
+            "description": "Endpoints de autenticación y gestión de usuarios"
+        },
+        {
+            "name": "Boletas",
+            "description": "Gestión de boletas de venta electrónicas"
+        },
+        {
+            "name": "Sucursales",
+            "description": "Gestión de sucursales o establecimientos de la empresa. Cada sucursal puede emitir sus propios comprobantes."
+        },
+        {
+            "name": "Clientes",
+            "description": "Gestión de clientes (personas o empresas que compran). Cada cliente puede ser asociado a múltiples comprobantes."
+        },
+        {
+            "name": "Notas de Crédito",
+            "description": "Gestión de notas de crédito electrónicas. Se emiten para anular o corregir facturas/boletas."
+        },
+        {
+            "name": "Notas de Débito",
+            "description": "Gestión de notas de débito electrónicas. Se emiten para aumentar el importe de una factura o boleta."
+        },
+        {
+            "name": "Facturas",
+            "description": "Gestión de facturas electrónicas"
+        }
+    ]
+}
