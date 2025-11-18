@@ -246,10 +246,12 @@ class SetupController extends Controller
             // Configurar certificado si se proporciona
             if ($request->hasFile('certificate_file')) {
                 $certificateFile = $request->file('certificate_file');
-                $path = $certificateFile->storeAs('certificado', 'certificado.pem', 'public');
+                
+                // Guardar el contenido del certificado en la BD en lugar de un archivo
+                $certificadoContent = file_get_contents($certificateFile->getRealPath());
                 
                 $company->update([
-                    'certificado_pem' => $path,
+                    'certificado_pem' => $certificadoContent,
                     'certificado_password' => $request->certificate_password
                 ]);
             }

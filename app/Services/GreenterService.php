@@ -56,22 +56,36 @@ class GreenterService
         
         $see->setService($endpoint);
         
-        // Configurar certificado cargando desde archivo
+        // Configurar certificado desde base de datos o archivo
         try {
-            $certificadoPath = storage_path('app/public/certificado/certificado.pem');
+            $certificadoContent = null;
             
-            if (!file_exists($certificadoPath)) {
-                throw new Exception("Archivo de certificado no encontrado: " . $certificadoPath);
-            }
-            
-            $certificadoContent = file_get_contents($certificadoPath);
-            
-            if ($certificadoContent === false) {
-                throw new Exception("No se pudo leer el archivo de certificado");
+            // Primero intentar desde base de datos
+            if (!empty($this->company->certificado_pem)) {
+                // Si certificado_pem contiene el contenido del certificado (texto)
+                if (strpos($this->company->certificado_pem, '-----BEGIN') !== false) {
+                    $certificadoContent = $this->company->certificado_pem;
+                    Log::info("Certificado cargado desde base de datos");
+                } else {
+                    // Si es una ruta, leer desde archivo
+                    $certificadoPath = storage_path('app/public/' . $this->company->certificado_pem);
+                    
+                    if (!file_exists($certificadoPath)) {
+                        throw new Exception("Archivo de certificado no encontrado: " . $certificadoPath);
+                    }
+                    
+                    $certificadoContent = file_get_contents($certificadoPath);
+                    
+                    if ($certificadoContent === false) {
+                        throw new Exception("No se pudo leer el archivo de certificado");
+                    }
+                    Log::info("Certificado cargado desde archivo: " . $certificadoPath);
+                }
+            } else {
+                throw new Exception("No hay certificado configurado para esta empresa");
             }
             
             $see->setCertificate($certificadoContent);
-            Log::info("Certificado cargado desde archivo: " . $certificadoPath);
         } catch (Exception $e) {
             Log::error("Error al configurar certificado: " . $e->getMessage());
             throw new Exception("Error al configurar certificado: " . $e->getMessage());

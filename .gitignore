@@ -25,6 +25,9 @@
 /storage/app/public/certificado/*.pfx
 /storage/app/public/certificado/*.p12
 /storage/app/temp/certificados/
+/storage/app/certificates/*.pfx
+/storage/app/certificates/*.p12
+/storage/app/certificates/*.pem
 /vendor
 Homestead.json
 Homestead.yaml
