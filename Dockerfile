@@ -36,15 +36,13 @@ RUN mkdir -p storage/framework/cache/data \
     && chmod -R 775 storage bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache
 
-# Generar caches de Laravel
-RUN php artisan config:cache || true \
-    && php artisan route:cache || true \
-    && php artisan view:cache || true
-
 # Exponer puerto 8000
 EXPOSE 8000
 
-# Comando de inicio
-CMD php artisan migrate --force && \
+# Comando de inicio - Limpiar cache, migrar, generar swagger y servir
+CMD php artisan config:clear && \
+    php artisan route:clear && \
+    php artisan cache:clear && \
+    php artisan migrate --force && \
     php artisan l5-swagger:generate && \
     php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
