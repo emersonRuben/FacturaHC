@@ -122,22 +122,36 @@ class GreenterService
             'cpe' => $endpoint,
         ]);
         
-        // Configurar certificado
+        // Configurar certificado desde base de datos o archivo
         try {
-            $certificadoPath = storage_path('app/public/certificado/certificado.pem');
+            $certificadoContent = null;
             
-            if (!file_exists($certificadoPath)) {
-                throw new Exception("Archivo de certificado no encontrado para GRE: " . $certificadoPath);
-            }
-            
-            $certificadoContent = file_get_contents($certificadoPath);
-            
-            if ($certificadoContent === false) {
-                throw new Exception("No se pudo leer el archivo de certificado para GRE");
+            if (!empty($this->company->certificado_pem)) {
+                // Si certificado_pem contiene el contenido del certificado (texto)
+                if (strpos($this->company->certificado_pem, '-----BEGIN') !== false) {
+                    $certificadoContent = $this->company->certificado_pem;
+                    Log::info("Certificado GRE cargado desde base de datos");
+                } else {
+                    // Si es una ruta, leer desde archivo
+                    $certificadoPath = storage_path('app/public/' . $this->company->certificado_pem);
+                    
+                    if (!file_exists($certificadoPath)) {
+                        throw new Exception("Archivo de certificado no encontrado para GRE: " . $certificadoPath);
+                    }
+                    
+                    $certificadoContent = file_get_contents($certificadoPath);
+                    
+                    if ($certificadoContent === false) {
+                        throw new Exception("No se pudo leer el archivo de certificado para GRE");
+                    }
+                    
+                    Log::info("Certificado GRE cargado desde archivo: " . $certificadoPath);
+                }
+            } else {
+                throw new Exception("No hay certificado configurado para esta empresa (GRE)");
             }
             
             $api->setCertificate($certificadoContent);
-            Log::info("Certificado GRE cargado desde archivo: " . $certificadoPath);
         } catch (Exception $e) {
             Log::error("Error al configurar certificado para GRE: " . $e->getMessage());
             throw new Exception("Error al configurar certificado para GRE: " . $e->getMessage());
