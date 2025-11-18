@@ -36,12 +36,12 @@ RUN mkdir -p storage/framework/cache/data \
     && chmod -R 775 storage bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache
 
-# Copiar script de inicio
+# Copiar script de inicio y convertir line endings
 COPY start.sh /usr/local/bin/start.sh
-RUN chmod +x /usr/local/bin/start.sh
+RUN sed -i 's/\r$//' /usr/local/bin/start.sh && chmod +x /usr/local/bin/start.sh
 
 # Exponer puerto
 EXPOSE ${PORT:-8000}
 
 # Comando de inicio
-CMD ["/usr/local/bin/start.sh"]
+CMD ["/bin/sh", "/usr/local/bin/start.sh"]
