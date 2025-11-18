@@ -36,16 +36,12 @@ RUN mkdir -p storage/framework/cache/data \
     && chmod -R 775 storage bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache
 
-# Exponer puerto 8000
-EXPOSE 8000
+# Copiar script de inicio
+COPY start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
 
-# Comando de inicio - Limpiar cache, migrar, generar swagger y servir
-CMD php artisan config:clear && \
-    php artisan route:clear && \
-    php artisan cache:clear && \
-    php artisan migrate --force && \
-    echo "Migraciones completadas" && \
-    php artisan l5-swagger:generate && \
-    echo "Swagger generado" && \
-    echo "Iniciando servidor en puerto ${PORT:-8000}..." && \
-    php artisan serve --host=0.0.0.0 --port=${PORT:-8000} --verbose
+# Exponer puerto
+EXPOSE ${PORT:-8000}
+
+# Comando de inicio
+CMD ["/usr/local/bin/start.sh"]
