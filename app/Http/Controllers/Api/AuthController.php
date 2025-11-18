@@ -28,13 +28,13 @@ use Illuminate\Validation\Rules\Password;
  * )
  * 
  * @OA\Server(
- *     url="http://127.0.0.1:8000",
- *     description="Servidor de Desarrollo Local"
+ *     url=L5_SWAGGER_CONST_HOST,
+ *     description="Servidor de Producción"
  * )
  * 
  * @OA\Server(
  *     url="http://localhost:8000",
- *     description="Servidor Local Docker"
+ *     description="Servidor Local (Desarrollo)"
  * )
  * 
  * @OA\SecurityScheme(
