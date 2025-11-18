@@ -44,5 +44,8 @@ CMD php artisan config:clear && \
     php artisan route:clear && \
     php artisan cache:clear && \
     php artisan migrate --force && \
+    echo "Migraciones completadas" && \
     php artisan l5-swagger:generate && \
-    php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
+    echo "Swagger generado" && \
+    echo "Iniciando servidor en puerto ${PORT:-8000}..." && \
+    php artisan serve --host=0.0.0.0 --port=${PORT:-8000} --verbose
