@@ -346,11 +346,47 @@ trait HasCompanyConfigurations
     {
         $environment = $this->modo_produccion ? 'produccion' : 'beta';
         
-        return $this->getConfig('service_endpoints', $environment, $serviceType, [
-            'endpoint' => '',
-            'wsdl' => '',
-            'timeout' => 30
-        ]);
+        // Intentar obtener de company_configurations
+        $config = $this->getConfig('service_endpoints', $environment, $serviceType, null);
+        
+        // Si no hay configuración, usar fallback de las columnas de la tabla companies
+        if (empty($config) || empty($config['endpoint'])) {
+            // Fallback para facturación
+            if ($serviceType === 'facturacion') {
+                $endpoint = $this->modo_produccion 
+                    ? ($this->endpoint_produccion ?? 'https://e-factura.sunat.gob.pe/ol-ti-itcpfegem/billService')
+                    : ($this->endpoint_beta ?? 'https://e-beta.sunat.gob.pe/ol-ti-itcpfegem-beta/billService');
+                
+                return [
+                    'endpoint' => $endpoint,
+                    'wsdl' => str_replace('billService', 'billService?wsdl', $endpoint),
+                    'timeout' => 30
+                ];
+            }
+            
+            // Fallback para guías de remisión
+            if ($serviceType === 'guias_remision') {
+                $endpoint = $this->modo_produccion
+                    ? 'https://api-cpe.sunat.gob.pe/v1/'
+                    : 'https://api-cpe-beta.sunat.gob.pe/v1/';
+                
+                return [
+                    'endpoint' => $endpoint,
+                    'api_endpoint' => $endpoint,
+                    'wsdl' => '',
+                    'timeout' => 30
+                ];
+            }
+            
+            // Default vacío para otros servicios
+            return [
+                'endpoint' => '',
+                'wsdl' => '',
+                'timeout' => 30
+            ];
+        }
+        
+        return $config;
     }
 
     /**

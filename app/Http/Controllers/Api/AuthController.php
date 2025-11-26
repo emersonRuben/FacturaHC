@@ -79,10 +79,8 @@ class AuthController extends Controller
         try {
             // Ejecutar seeder completo de roles y permisos automáticamente
             $this->runRolesAndPermissionsSeeder();
-
             // Obtener rol de super admin
             $superAdminRole = Role::where('name', 'super_admin')->first();
-
             // Crear primer usuario super admin
             $user = User::create([
                 'name' => $request->name,
